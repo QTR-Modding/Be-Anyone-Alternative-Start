@@ -8,19 +8,13 @@
 
 class NewGameHook {
 public:
-    static void Install() { originalFunction = stl::write_prologue_hook(REL::RelocationID(51246, 52118).address(), thunk); }
+    static void Install() { UI::NewGame::startNewGame = stl::write_prologue_hook(REL::RelocationID(51246, 52118).address(), thunk); }
 
 private:
     static void thunk() { 
-        auto success = reinterpret_cast<const SKSE::detail::SKSEMessagingInterface*>(SKSE::GetMessagingInterface())->Dispatch(0, SKSE::MessagingInterface::kNewGame, (void*)RE::TESForm::LookupByID<RE::TESQuest>(0x3372b), sizeof(void*), nullptr);
-        if (!success) {
-            logger::error("Failed to patch the SKSE event");
-        }
-        SpeechManager::NewGame();
-        Manager::OnNewGame();
+ 
         UI::NewGame::Next();
     }
-    static inline REL::Relocation<decltype(thunk)> originalFunction;
 };
 
 struct SaveGameHook {

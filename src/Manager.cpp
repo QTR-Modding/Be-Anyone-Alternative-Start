@@ -152,6 +152,7 @@ void ModifyRaceMenu(const char* name) {
 }
 
 void Manager::ShowRaceMenu() {
+    if (!enabled) return;
     if (!startedNewGame) {
         return;
     }
@@ -173,6 +174,7 @@ void Manager::ShowRaceMenu() {
 }
 
 void Manager::PlayerHideRaceMenu() {
+    if (!enabled) return;
     if (!Quest::IsDone(MQ101)) {
         Quest::CompleteQuest(MQ101);
 
@@ -216,6 +218,7 @@ RE::FormID Manager::GetPatternFormID() {
 }
 
 void Manager::StartGame() {
+    if (!enabled) return;
     auto player = RE::PlayerCharacter::GetSingleton();
     auto playerBase = player->GetActorBase();
     auto possesionBase = playerCopyTarget->GetActorBase();
@@ -467,6 +470,7 @@ std::vector<RE::Character*>& Manager::GetAllCharacters() {
 }
 
 void Manager::OnNewGame() {
+    if (!enabled) return;
     if (!addedFactions.empty()) {
         auto player = RE::PlayerCharacter::GetSingleton();
 

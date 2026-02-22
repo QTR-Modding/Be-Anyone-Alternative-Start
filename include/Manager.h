@@ -17,6 +17,7 @@ public:
     static void OnNewGame();
     static inline bool startAtNPCLocation = false;
     static inline bool startMainQuestLine = true;
+    static inline bool enabled = false;
 private:
     static inline std::vector<RE::Character*> allNpcs;
     static inline std::vector<RE::FACTION_RANK> addedFactions;

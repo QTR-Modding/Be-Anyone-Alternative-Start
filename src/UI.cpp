@@ -4,6 +4,7 @@
 #include "Translation.h"
 #include "FormId.h"
 #include "Configuration.h"
+#include "SpeachManager.h"
 
 void UI::Register() {
     if (!SKSEMenuFramework::IsInstalled()) {
@@ -12,6 +13,7 @@ void UI::Register() {
     SKSEMenuFramework::SetSection(MOD_NAME);
     SKSEMenuFramework::AddSectionItem(Translation::Get("Config.Config"), RenderMenu);
     SKSEMenuFramework::AddHudElement(NewGame::RenderBackground);
+    NewGame::startAsNPCWindow = SKSEMenuFramework::AddWindow(NewGame::RenderStartAsNPC, true);
     NewGame::chooseCharacterWindow = SKSEMenuFramework::AddWindow(NewGame::RenderChooseCharacterWindow, true);
     NewGame::chooseSideWindow = SKSEMenuFramework::AddWindow(NewGame::RenderChooseSideWindow, true);
     NewGame::reviewWindow = SKSEMenuFramework::AddWindow(NewGame::RenderReviewWindow, true);
@@ -37,27 +39,37 @@ void UI::NewGame::Previus() {
     }
 }
 void UI::NewGame::Update() {
+    startAsNPCWindow->IsOpen = false;
     chooseCharacterWindow->IsOpen = false;
     chooseSideWindow->IsOpen = false;
     reviewWindow->IsOpen = false;
     switch (index) {
         case 1:
+            if (startAsNPCWindow) {
+                startAsNPCWindow->IsOpen = true;
+            }
+            break;
+        case 2:
             if (chooseCharacterWindow) {
                 chooseCharacterWindow->IsOpen = true;
             }
         break;
-        case 2:
+        case 3:
             if (chooseSideWindow) {
                 chooseSideWindow->IsOpen = true;
             }
             break;
-        case 3:
+        case 4:
             if (chooseSideWindow) {
                 reviewWindow->IsOpen = true;
             }
             break;
-        case 4:
+        case 5:
             index = 0;
+            auto success = reinterpret_cast<const SKSE::detail::SKSEMessagingInterface*>(SKSE::GetMessagingInterface())->Dispatch(0, SKSE::MessagingInterface::kNewGame, (void*)RE::TESForm::LookupByID<RE::TESQuest>(0x3372b), sizeof(void*), nullptr);
+            if (!success) {
+                logger::error("Failed to patch the SKSE event");
+            }
             Manager::StartGame();
         break;
     }
@@ -68,6 +80,52 @@ void __stdcall UI::RenderMenu() {
     }
 }
 
+void __stdcall UI::NewGame::RenderStartAsNPC() {
+    BeguinWindow(Translation::Get("Start.StartAsNpc"));
+
+    ImGuiMCP::ImVec2 region;
+    ImGuiMCP::GetContentRegionAvail(&region);
+
+    float contentWidth = region.x * 0.7f;
+    float offsetX = (region.x - contentWidth) * 0.5f;
+
+    float totalHeight = ImGuiMCP::GetTextLineHeightWithSpacing() + ImGuiMCP::GetStyle()->ItemSpacing.y + 50.0f;
+
+    float offsetY = (region.y - totalHeight) * 0.5f;
+
+    if (offsetY > 0.0f) ImGuiMCP::SetCursorPosY(ImGuiMCP::GetCursorPosY() + offsetY);
+
+    ImGuiMCP::SetCursorPosX(offsetX);
+    ImGuiMCP::BeginGroup();
+
+    ImGuiMCP::ImVec2 halfButton = {contentWidth * 0.5f - 4.0f, 50.0f};
+
+    ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Button, ImGuiMCP::ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
+    ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_ButtonHovered, ImGuiMCP::ImVec4(0.8f, 0.1f, 0.1f, 1.0f));
+    ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_ButtonActive, ImGuiMCP::ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
+
+    if (ImGuiMCP::Button(Translation::Get("Controls.No"), halfButton)) {
+        Manager::enabled = false;
+        startNewGame();
+        index = 0;
+        Update();
+    }
+
+    ImGuiMCP::PopStyleColor(3);
+
+    ImGuiMCP::SameLine();
+
+    if (ImGuiMCP::Button(Translation::Get("Controls.Yes"), halfButton)) {
+        Manager::enabled = true;
+        SpeechManager::NewGame();
+        Manager::OnNewGame();
+        Next();
+    }
+
+    ImGuiMCP::EndGroup();
+    ImGuiMCP::End();
+}
+
 void __stdcall UI::NewGame::RenderChooseCharacterWindow() {
     BeguinWindow(std::format("{}##MenuEntiryFromMod", Translation::Get("CharacterMenu.WhoDoYouWantToBe")).c_str());
 
@@ -75,7 +133,16 @@ void __stdcall UI::NewGame::RenderChooseCharacterWindow() {
     static int currentPage = 0;
     static int pageSize = Configuration::GroupsPerPage;
 
+    if (ImGuiMCP::Button(Translation::Get("Controls.GoBack"))) {
+        Previus();
+    }
+    
+    ImGuiMCP::SameLine();
+
     bool filterChanged = filter.Draw(Translation::Get("CharacterMenu.FilterByName"), 500.0f);
+
+
+
     if (filterChanged) currentPage = 0;
 
     bool wasDevMode = Configuration::EnableDevMode;
