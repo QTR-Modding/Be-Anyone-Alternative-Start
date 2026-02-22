@@ -1,0 +1,9 @@
+{
+  "QuestsToSetStage": [
+    {
+      "Quest": "Skyrim.esm~0x39645",
+      "Stage": [ 12 ]
+    }
+  ],
+  "RequiredActor": null
+}

@@ -1,0 +1,76 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Cutleast/FOMOD-Creation-Kit/master/res/schemas/ModConfig5.0.xsd">
+    <moduleName>Be Anyone - Alternative Start</moduleName>
+    <moduleImage path="assets\Mod Image.png"/>
+    <requiredInstallFiles>
+        <folder source="files\Be Anyone - Alternative Start" destination="" alwaysInstall="false" installIfUsable="false" priority="0"/>
+    </requiredInstallFiles>
+    <installSteps order="Explicit">
+        <installStep name="Features">
+            <optionalFileGroups>
+                <group name="" type="SelectAny">
+                    <plugins>
+                        <plugin name="01 Intro Sequence">
+                            <description>Enables the voiceover into the sequence at the start of the game.
+If this option is enabled, enable the light esp "Be Anyone - Alternative Start - Intro.esp".</description>
+                            <image path="assets\sheogorath.png"/>
+                            <conditionFlags>
+                                <flag name="introSequence">true</flag>
+                            </conditionFlags>
+                            <typeDescriptor>
+                                <type name="Recommended"/>
+                            </typeDescriptor>
+                        </plugin>
+						<plugin name="02 Starter Items">
+							<description>Add starter items to every character. (10 of health, magicka, and stamina potions; 1x cure disease, cure poison potion, 20x lockpicks).</description>
+							<image path="assets\starterItems.png"/>
+							<conditionFlags>
+								<flag name="starterItems">true</flag>
+							</conditionFlags>
+							<typeDescriptor>
+								<type name="Recommended"/>
+							</typeDescriptor>
+						</plugin>
+                        <plugin name="03 Golden Claw">
+                            <description>Start the Golden Claw quest when starting the game.</description>
+                            <image path="assets\goldenClaw.png"/>
+                            <conditionFlags>
+                                <flag name="goldenClaw">true</flag>
+                            </conditionFlags>
+                            <typeDescriptor>
+                                <type name="Recommended"/>
+                            </typeDescriptor>
+                        </plugin>
+                    </plugins>
+                </group>
+                </optionalFileGroups>
+        </installStep>
+    </installSteps>
+    <conditionalFileInstalls>
+        <patterns>
+            <pattern>
+                <dependencies operator="And">
+                    <flagDependency flag="introSequence" value="true"/>
+                </dependencies>
+                <files>
+                    <folder source="files\Be Anyone - Alternative Start - Intro Sequence" destination="" alwaysInstall="true" installIfUsable="false" priority="1"/>
+                </files>
+            </pattern>
+            <pattern>
+                <dependencies operator="And">
+                    <flagDependency flag="goldenClaw" value="true"/>
+                </dependencies>
+                <files>
+                    <folder source="files\Be Anyone - Alternative Start - Golden Claw" destination="" alwaysInstall="true" installIfUsable="false" priority="1"/>
+                </files>
+            </pattern>
+			<pattern>
+				<dependencies operator="And">
+					<flagDependency flag="starterItems" value="true"/>
+				</dependencies>
+				<files>
+					<folder source="files\Be Anyone - Alternative Start - Starter Items" destination="" alwaysInstall="true" installIfUsable="false" priority="1"/>
+				</files>
+			</pattern>
+        </patterns>
+    </conditionalFileInstalls>
+</config>

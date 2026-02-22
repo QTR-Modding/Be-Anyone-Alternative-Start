@@ -1,0 +1,33 @@
+{
+  "ObjectsToAdd": [
+    {
+      "Object": "Skyrim.esm~0x3eade",
+      "Count": 10
+    },
+    {
+      "Object": "Skyrim.esm~0x39be8",
+      "Count": 10
+    },
+    {
+      "Object": "Skyrim.esm~0x3eae1",
+      "Count": 10
+    },
+    {
+      "Object": "Skyrim.esm~0xae723",
+      "Count": 1
+    },
+    {
+      "Object": "Skyrim.esm~0x65a64",
+      "Count": 1
+    },
+    {
+      "Object": "Skyrim.esm~0xA",
+      "Count": 20
+    },
+    {
+      "Object": "Skyrim.esm~0xf",
+      "Count": 1000
+    }
+  ],
+  "RequiredActor": null
+}

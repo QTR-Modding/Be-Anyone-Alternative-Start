@@ -1,0 +1,12 @@
+{
+  "IgnoreCells": [
+    "Skyrim.esm~0xB9BC6",
+    "Skyrim.esm~0x196b7",
+    "Skyrim.esm~0x243df",
+    "Skyrim.esm~0x280c2",
+    "Skyrim.esm~0x5723b"
+  ],
+  "IgnoreReferences": [
+    "Dawnguard.esm~0x6754"
+  ]
+}

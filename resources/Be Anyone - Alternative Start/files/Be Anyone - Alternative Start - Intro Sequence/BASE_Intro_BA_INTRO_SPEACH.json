@@ -1,0 +1,23 @@
+{
+  "SpeachSequence": [
+    {
+      "SpeakerName": "Sheogorath",
+      "Subtitles": "You barely escaped that dragon in Helgen, only to be ambushed on your way to Whiterun. What a shame.",
+      "Duration": 7,
+      "Audio": "Be Anyone - Alternative Start - Intro.esp~0x800"
+    },
+    {
+      "SpeakerName": "Sheogorath",
+      "Subtitles": "I felt sorry for you. So much potential! I simply couldn't let it go to waste. I'll allow you to continue from where you left off.",
+      "Duration": 10,
+      "Audio": "Be Anyone - Alternative Start - Intro.esp~0x801"
+    },
+    {
+      "SpeakerName": "Sheogorath",
+      "Subtitles": "To make that possible, I've stolen a brand-new flesh vessel for you. Don’t worry about the previous occupant. They won't mind. We've sorted it out.",
+      "Duration": 10,
+      "Audio": "Be Anyone - Alternative Start - Intro.esp~0x802"
+    }
+  ],
+  "RequiredActor": null
+}
