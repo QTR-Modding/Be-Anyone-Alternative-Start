@@ -165,8 +165,8 @@ void ModifyRaceMenu(const char* name) {
             fadeArgs[0].SetBoolean(true);
             RaceSexPanelsInstance.Invoke("FadeTextEntry", nullptr, fadeArgs, 1);
         }
-        RE::ControlMap::GetSingleton()->AllowTextInput(true);
     }
+    RE::ControlMap::GetSingleton()->AllowTextInput(true);
 }
 
 void Manager::ShowRaceMenu() {
