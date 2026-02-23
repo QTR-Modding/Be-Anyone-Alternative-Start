@@ -74,10 +74,44 @@ struct AddMessageHook {
     }
 };
 
+ struct QuestStartHook {
+    static bool thunk(RE::TESQuest* a_quest, bool& a_result, bool a_startNow) {
+        if (a_quest) {
+            logger::info("Quest started: {} {:x} {}", a_quest->GetName(), a_quest->GetFormID(), a_startNow);
+        }
+        return originalFunction(a_quest, a_result, a_startNow);
+    }
+    static inline REL::Relocation<decltype(thunk)> originalFunction;
+    static void Install() { originalFunction = stl::write_prologue_hook(REL::RelocationID(24481, 25003).address(), thunk); }
+};
+
+ struct QuestStageHook {
+    static bool thunk(RE::TESQuest* a_quest, uint16_t a_stage) {
+        auto result = originalFunction(a_quest, a_stage);
+        if (a_quest) {
+            logger::info("Quest Sage: {} {:x} {}", a_quest->GetName(), a_quest->GetFormID(), a_stage);
+
+            #define DLC1NPCMentalModel 0x2002b6e
+            if (a_quest->GetFormID() == DLC1NPCMentalModel) {
+
+            }
+        }
+        return result;
+    }
+    static inline REL::Relocation<decltype(thunk)> originalFunction;
+    static void Install() {
+    SKSE::AllocTrampoline(14);
+        originalFunction = stl::write_prologue_hook(REL::RelocationID(24482, 25004).address(), thunk);
+    }
+};
+
+
 void Hooks::Install() {
     SaveGameHook::Install();
     LoadGameHook::Install();
     NewGameHook::Install();
     GameInitHook::Install();
     AddMessageHook::Install();
+    //QuestStartHook::Install();
+    //QuestStageHook::Install();
 }

@@ -43,6 +43,23 @@ void Quest::SetQuestSage(RE::FormID formId, std::vector<uint32_t> stages) {
     }
 }
 
+void Quest::CallQuestVoidFunction(RE::FormID formId, const char* className, const char* functionName) {
+    auto vm = RE::BSScript::Internal::VirtualMachine::GetSingleton();
+
+    auto questForm = RE::TESForm::LookupByID<RE::TESQuest>(formId);
+
+    if (!questForm) return;
+
+    auto policy = vm->GetObjectHandlePolicy();
+    RE::VMHandle handle = policy->GetHandleForObject(questForm->GetFormType(), questForm);
+    if (handle == policy->EmptyHandle()) {
+        return;
+    }
+    RE::BSScript::ZeroFunctionArguments args;
+    RE::BSTSmartPointer<RE::BSScript::IStackCallbackFunctor> callback;
+    auto res = vm->DispatchMethodCall(handle, className, functionName, &args, callback);
+}
+
 class OneObjectRefArgument : public RE::BSScript::IFunctionArguments {
 public:
     OneObjectRefArgument(RE::TESObjectREFR* a_ref) : ref(a_ref) {}

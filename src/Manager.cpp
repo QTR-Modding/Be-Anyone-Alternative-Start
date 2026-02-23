@@ -6,6 +6,7 @@
 #include "StarterQuestManager.h"
 #include "IgnoreManager.h"
 #include "Configuration.h"
+#include "Form.h"
 
 bool IsNullOrWhitespace(const char* str) {
     if (!str) return true;
@@ -24,6 +25,13 @@ bool IsNullOrWhitespace(const char* str) {
 #define MQ102B 0x2610A
 #define GHOST_SPELL 0x5030B
 #define RIVERWOOD 0x9732
+#define CW 0x19E53
+#define MQ00 0x1C5D9
+
+inline bool IsLiveAnotherLifeInstalled() {
+    constexpr auto dllPath = "Data/alternate start - live another life.esp";
+    return std::filesystem::exists(dllPath);
+}
 
 void OnSpreachEnd() {
 
@@ -36,6 +44,13 @@ void OnSpreachEnd() {
         defaultQuests->Apply();
     }
     if (Manager::startMainQuestLine) {
+        if (IsLiveAnotherLifeInstalled()) {
+            auto ARTHLALRumorsOfWarQuest = Form::GetIdFromString("alternate start - live another life.esp~0x7a334");
+            auto ARTHLALChargenQuest = Form::GetIdFromString("alternate start - live another life.esp~0xDAF");
+            Quest::CallQuestVoidFunction(ARTHLALChargenQuest, "arth_lal_startquest", "CleanupHelgen");
+            Quest::SetQuestSage(ARTHLALRumorsOfWarQuest, {20, 25, 28, 29, 30, 31, 32, 40, 41, 50});
+        }
+        Quest::SetQuestSage(CW, {0});
         Quest::SetQuestSage(MQ102, {30});
     }
 }
