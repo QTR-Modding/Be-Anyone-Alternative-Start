@@ -81,7 +81,7 @@ void __stdcall UI::RenderMenu() {
 }
 
 void __stdcall UI::NewGame::RenderStartAsNPC() {
-    BeguinWindow(Translation::Get("Start.StartAsNpc"));
+    BeguinWindow(Translation::Get("Start.WhoDoYouWantToBe"));
 
     ImGuiMCP::ImVec2 region;
     ImGuiMCP::GetContentRegionAvail(&region);
@@ -104,7 +104,7 @@ void __stdcall UI::NewGame::RenderStartAsNPC() {
     ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_ButtonHovered, ImGuiMCP::ImVec4(0.8f, 0.1f, 0.1f, 1.0f));
     ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_ButtonActive, ImGuiMCP::ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
 
-    if (ImGuiMCP::Button(Translation::Get("Controls.No"), halfButton)) {
+    if (ImGuiMCP::Button(Translation::Get("Start.StartAsPlayer"), halfButton)) {
         Manager::enabled = false;
         startNewGame();
         index = 0;
@@ -115,7 +115,7 @@ void __stdcall UI::NewGame::RenderStartAsNPC() {
 
     ImGuiMCP::SameLine();
 
-    if (ImGuiMCP::Button(Translation::Get("Controls.Yes"), halfButton)) {
+    if (ImGuiMCP::Button(Translation::Get("Start.StartAsNpc"), halfButton)) {
         Manager::enabled = true;
         SpeechManager::NewGame();
         Manager::OnNewGame();
