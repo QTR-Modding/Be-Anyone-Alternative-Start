@@ -18,6 +18,9 @@ public:
     static inline bool startAtNPCLocation = false;
     static inline bool startMainQuestLine = true;
     static inline bool enabled = false;
+
+    static inline bool doesGameStartedNow = false;
+    static inline bool firstRaceMenuHide = false;
 private:
     static inline std::vector<RE::Character*> allNpcs;
     static inline std::vector<RE::FACTION_RANK> addedFactions;
@@ -25,5 +28,5 @@ private:
     static inline RE::Character* oldCopyTarget = nullptr;
     static inline RE::Character* playerCopyTarget = nullptr;
     static inline std::string name;
-    static inline bool startedNewGame = false;
+
 };

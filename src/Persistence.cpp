@@ -25,8 +25,9 @@ void Persistence::Load(std::string fileName) {
             return;
         }
         auto enabled = reader.ReadBool();
-
         if (enabled) {
+            Manager::doesGameStartedNow = reader.ReadBool();
+            Manager::firstRaceMenuHide = reader.ReadBool();
             auto id = reader.ReadFormId();
             SpeechManager::LoadGame(&reader);
             if (id != 0) {
@@ -34,6 +35,9 @@ void Persistence::Load(std::string fileName) {
                 Manager::OnNewGame();
                 Manager::CopyData();
             }
+        } else {
+            Manager::doesGameStartedNow = false;
+            Manager::firstRaceMenuHide = false;
         }
         logger::trace("File exist");
     } else {
@@ -52,6 +56,9 @@ void Persistence::Save(std::string fileName) {
         auto enabled = Manager::enabled;
         writer.WriteBool(enabled);
         if (enabled) {
+            writer.WriteBool(Manager::doesGameStartedNow);
+            writer.WriteBool(Manager::firstRaceMenuHide);
+
             if (Manager::GetBaseCharacter()) {
                 writer.WriteFormId(Manager::GetBaseCharacter()->GetFormID());
             } else {

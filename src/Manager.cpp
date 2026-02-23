@@ -153,10 +153,11 @@ void ModifyRaceMenu(const char* name) {
 
 void Manager::ShowRaceMenu() {
     if (!enabled) return;
-    if (!startedNewGame) {
+    if (!doesGameStartedNow) {
         return;
     }
-    startedNewGame = false;
+
+    doesGameStartedNow = false;
     if (!Quest::IsDone(MQ101)) {
         RE::UIMessageQueue::GetSingleton()->AddMessage(RE::RaceSexMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kShow, nullptr);
         std::thread([] { 
@@ -175,34 +176,36 @@ void Manager::ShowRaceMenu() {
 
 void Manager::PlayerHideRaceMenu() {
     if (!enabled) return;
-    if (!Quest::IsDone(MQ101)) {
-        Quest::CompleteQuest(MQ101);
+    if (!firstRaceMenuHide) {
+        return;
+    }
 
-        auto specificItems = StartObjectManager::GetGroupForCharacter(GetPatternFormID());
-        if (specificItems) {
-            specificItems->AddToPlayer();
-        }
-        auto genericItems= StartObjectManager::GetGroupForCharacter(0);
-        if (genericItems) {
-            genericItems->AddToPlayer();
-        }
-        auto group = IntroVoiceManager::GetRandomGroup(GetPatternFormID());
+    firstRaceMenuHide = false;
 
-        if (group) {
-            for (auto sequence : group->sequences) {
-                SpeechManager::Add({
-                    sequence.speakerName,
-                    sequence.subtitiles,
-                    sequence.duration,
-                    sequence.audio
-                });
-            }
-            if (group->sequences.size() == 0) {
-                OnSpreachEnd();
-            }
-        } else {
+    auto specificItems = StartObjectManager::GetGroupForCharacter(GetPatternFormID());
+    if (specificItems) {
+        specificItems->AddToPlayer();
+    }
+    auto genericItems= StartObjectManager::GetGroupForCharacter(0);
+    if (genericItems) {
+        genericItems->AddToPlayer();
+    }
+    auto group = IntroVoiceManager::GetRandomGroup(GetPatternFormID());
+
+    if (group) {
+        for (auto sequence : group->sequences) {
+            SpeechManager::Add({
+                sequence.speakerName,
+                sequence.subtitiles,
+                sequence.duration,
+                sequence.audio
+            });
+        }
+        if (group->sequences.size() == 0) {
             OnSpreachEnd();
         }
+    } else {
+        OnSpreachEnd();
     }
 }
 
@@ -502,5 +505,6 @@ void Manager::OnNewGame() {
         }
         oldCopyTarget = nullptr;
     }
-    startedNewGame = true;
+    doesGameStartedNow = true;
+    firstRaceMenuHide = true;
 }
