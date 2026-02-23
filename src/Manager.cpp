@@ -107,7 +107,10 @@ void Manager::Install() {
         return std::strcmp(a->GetName(), b->GetName()) < 0;
     });
 }
-
+inline bool IsRaceMenuInstalled() {
+    constexpr auto dllPath = "Data/RaceMenu.esp";
+    return std::filesystem::exists(dllPath);
+}
 void ModifyRaceMenu(const char* name) {
     auto ui = RE::UI::GetSingleton();
     auto faderMenu = ui->GetMenu<RE::RaceSexMenu>();
@@ -134,21 +137,36 @@ void ModifyRaceMenu(const char* name) {
         return;
     }
 
-    RE::GFxValue textEntryField;
-    if (RaceSexPanelsInstance.GetMember("_TextEntryField", &textEntryField)) {
-        RE::GFxValue textInput;
-        if (textEntryField.GetMember("TextInputInstance", &textInput)) {
-            textInput.SetText(name);
-            textInput.SetMember("focused", true);  // or textInput.SetBoolean("focused", true);
+    if (IsRaceMenuInstalled()) {
+        RE::GFxValue textEntryField;
+        if (RaceSexPanelsInstance.GetMember("textEntry", &textEntryField)) {
+            RE::GFxValue textInput;
+            if (textEntryField.GetMember("TextInputInstance", &textInput)) {
+                textInput.SetText(name);
+                textInput.SetMember("focused", true);  // or textInput.SetBoolean("focused", true);
+            }
+
+            // FadeTextEntry(true) is on the panel, not the field
+            RE::GFxValue fadeArgs[1];
+            fadeArgs[0].SetBoolean(true);
+            RaceSexPanelsInstance.Invoke("ShowTextEntry", nullptr, fadeArgs, 1);
         }
+    } else {
+        RE::GFxValue textEntryField;
+        if (RaceSexPanelsInstance.GetMember("_TextEntryField", &textEntryField)) {
+            RE::GFxValue textInput;
+            if (textEntryField.GetMember("TextInputInstance", &textInput)) {
+                textInput.SetText(name);
+                textInput.SetMember("focused", true);  // or textInput.SetBoolean("focused", true);
+            }
 
-        // FadeTextEntry(true) is on the panel, not the field
-        RE::GFxValue fadeArgs[1];
-        fadeArgs[0].SetBoolean(true);
-        RaceSexPanelsInstance.Invoke("FadeTextEntry", nullptr, fadeArgs, 1);
+            // FadeTextEntry(true) is on the panel, not the field
+            RE::GFxValue fadeArgs[1];
+            fadeArgs[0].SetBoolean(true);
+            RaceSexPanelsInstance.Invoke("FadeTextEntry", nullptr, fadeArgs, 1);
+        }
+        RE::ControlMap::GetSingleton()->AllowTextInput(true);
     }
-
-    RE::ControlMap::GetSingleton()->AllowTextInput(true);
 }
 
 void Manager::ShowRaceMenu() {
