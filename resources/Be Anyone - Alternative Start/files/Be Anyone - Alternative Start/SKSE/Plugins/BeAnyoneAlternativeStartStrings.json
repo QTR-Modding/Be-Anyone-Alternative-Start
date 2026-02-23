@@ -1,42 +1,46 @@
 {
-  "Start.WhoDoYouWantToBe": "Who do You Want to be?",
-  "Start.StartAsPlayer": "Start Player",
-  "Start.StartAsNpc": "Start as NPC",
-  "Config.Config": "Config",
-  "CharacterMenu.WhoDoYouWantToBe": "Who do you want to be? Click on any of the character rows to choose your destiny.",
-  "CharacterMenu.FilterByName": "Filter by Name",
-  "CharacterMenu.Table.Name": "Name",
-  "CharacterMenu.Table.Sex": "Sex",
-  "CharacterMenu.Table.Male": "Male",
-  "CharacterMenu.Table.Female": "Female",
-  "CharacterMenu.Table.Level": "Level",
-  "CharacterMenu.Table.Page": "Page",
-  "CharacterMenu.Table.Next": "\uf061",
-  "CharacterMenu.Table.Previus": "\uf060",
 
-  "SettingsMenu.Settings": "Settings",
-  "SettingsMenu.StartMainQuestline": "Start Main Quest Line",
-  "SettingsMenu.StartAtNpcLocation": "Start at NPC location (depending on where the NPC is,\n you may not be able to leave there without commands)",
+  "Window1.PlayerOrNpc": "Start as Player or NPC?",
+  "Window1.StartAsPlayer": "Start Player",
+  "Window1.StartAsNpc": "Start as NPC",
 
-  "Finish.ChooseAndReview": "Choose where you want to start, and review your choices.",
-  "Finish.BaseCharacter": "Base Character: ",
-  "Finish.WarSide": "War Side: ",
+  "Window2.WhoDoYouWantToBe": "Who do you want to be? Click on any of the character rows to choose your destiny.",
+  "Window2.FilterByName": "Filter by Name",
+  "Window2.Table.Name": "Name",
+  "Window2.Table.Sex": "Sex",
+  "Window2.Table.Male": "Male",
+  "Window2.Table.Female": "Female",
+  "Window2.Table.Level": "Level",
+  "Window2.Table.Page": "Page",
+  "Window2.Table.Next": "\uf061",
+  "Window2.Table.Previus": "\uf060",
+
+  "DevMode.Window2.Table.Controls": "Controls",
+  "DevMode.Window2.Table.CopyId": "Copy Id",
+  "DevMode.Window2.Table.CopyBaseId": "Copy Base Id",
+  "DevMode.Window2.Table.ChooseCharacter": "Choose Character",
+  "DevMode.Window2.Table.CopyCellId": "Copy Cell Id",
+
+  "Window3.Settings": "Settings",
+  "Window3.StartMainQuestline": "Start Main Quest Line (If no, he main quest line will only be available trough console commands)",
+  "Window3.StartAtNpcLocation": "Start at NPC location (If yes, depending on where the NPC is,\n you may not be able to leave there without console commands)",
+  "Window3.StartAtDefaultLocation": "Start default location",
+
+  "Window4.ChooseAndReview": "Choose where you want to start, and review your choices.",
+  "Window4.BaseCharacter": "Base Character: ",
+  "Window4.WarSide": "War Side: ",
+  "Window4.StartMainQuestline": "Start Main Quest Line",
+  "Window4.StartAtNpcLocation": "Start at NPC location",
+  "Window4.StartAtNpcLocationYes": "Yes (The main quest line will only be available trough console commands)",
+  "Window4.StartMainQuestlineNo": "No (depending on where the NPC is,\n you may not be able to leave there without console commands)",
+
 
   "Controls.GoBack": "Go Back",
   "Controls.Finish": "Finish (Start Game)",
   "Controls.Next": "Next",
-
   "Controls.Yes": "Yes",
   "Controls.No": "No",
 
-
-  "DevConfig.DevMode": "Dev Mode",
-  "DevConfig.Config": "Config",
-  "DevConfig.Reload": "Reload",
-
-  "DevMode.CharacterMenu.Table.Controls": "Controls",
-  "DevMode.CharacterMenu.Table.CopyId": "Copy Id",
-  "DevMode.CharacterMenu.Table.CopyBaseId": "Copy Base Id",
-  "DevMode.CharacterMenu.Table.ChooseCharacter": "Choose Character",
-  "DevMode.CharacterMenu.Table.CopyCellId": "Copy Cell Id"
+  "Config.Config": "Config",
+  "DevConfig.DevMode": "Dev Mode"
 }

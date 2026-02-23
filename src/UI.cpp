@@ -81,7 +81,7 @@ void __stdcall UI::RenderMenu() {
 }
 
 void __stdcall UI::NewGame::RenderStartAsNPC() {
-    BeguinWindow(Translation::Get("Start.WhoDoYouWantToBe"));
+    BeguinWindow(Translation::Get("Window1.PlayerOrNpc"));
 
     ImGuiMCP::ImVec2 region;
     ImGuiMCP::GetContentRegionAvail(&region);
@@ -104,7 +104,7 @@ void __stdcall UI::NewGame::RenderStartAsNPC() {
     ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_ButtonHovered, ImGuiMCP::ImVec4(0.8f, 0.1f, 0.1f, 1.0f));
     ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_ButtonActive, ImGuiMCP::ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
 
-    if (ImGuiMCP::Button(Translation::Get("Start.StartAsPlayer"), halfButton)) {
+    if (ImGuiMCP::Button(Translation::Get("Window1.StartAsPlayer"), halfButton)) {
         Manager::enabled = false;
         startNewGame();
         index = 0;
@@ -115,7 +115,7 @@ void __stdcall UI::NewGame::RenderStartAsNPC() {
 
     ImGuiMCP::SameLine();
 
-    if (ImGuiMCP::Button(Translation::Get("Start.StartAsNpc"), halfButton)) {
+    if (ImGuiMCP::Button(Translation::Get("Window1.StartAsNpc"), halfButton)) {
         Manager::enabled = true;
         SpeechManager::NewGame();
         Manager::OnNewGame();
@@ -127,7 +127,7 @@ void __stdcall UI::NewGame::RenderStartAsNPC() {
 }
 
 void __stdcall UI::NewGame::RenderChooseCharacterWindow() {
-    BeguinWindow(std::format("{}##MenuEntiryFromMod", Translation::Get("CharacterMenu.WhoDoYouWantToBe")).c_str());
+    BeguinWindow(std::format("{}##MenuEntiryFromMod", Translation::Get("Window2.WhoDoYouWantToBe")).c_str());
 
     static ImGuiMCP::ImGuiTextFilter filter;
     static int currentPage = 0;
@@ -139,7 +139,7 @@ void __stdcall UI::NewGame::RenderChooseCharacterWindow() {
     
     ImGuiMCP::SameLine();
 
-    bool filterChanged = filter.Draw(Translation::Get("CharacterMenu.FilterByName"), 500.0f);
+    bool filterChanged = filter.Draw(Translation::Get("Window2.FilterByName"), 500.0f);
 
 
 
@@ -221,11 +221,11 @@ void __stdcall UI::NewGame::RenderChooseCharacterWindow() {
     int columnCount = wasDevMode ? 4 : 3;
     int uid = 0;
     if (ImGuiMCP::BeginTable("NpcTable", columnCount, ImGuiMCP::ImGuiTableFlags_Borders | ImGuiMCP::ImGuiTableFlags_RowBg)) {
-        ImGuiMCP::TableSetupColumn(Translation::Get("CharacterMenu.Table.Name"), ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, 600.0f);
-        ImGuiMCP::TableSetupColumn(Translation::Get("CharacterMenu.Table.Sex"), ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, 256.0f);
-        ImGuiMCP::TableSetupColumn(Translation::Get("CharacterMenu.Table.Level"), ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, 256.0f);
+        ImGuiMCP::TableSetupColumn(Translation::Get("Window2.Table.Name"), ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, 600.0f);
+        ImGuiMCP::TableSetupColumn(Translation::Get("Window2.Table.Sex"), ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, 256.0f);
+        ImGuiMCP::TableSetupColumn(Translation::Get("Window2.Table.Level"), ImGuiMCP::ImGuiTableColumnFlags_WidthFixed, 256.0f);
         if (wasDevMode) {
-            ImGuiMCP::TableSetupColumn(Translation::Get("DevMode.CharacterMenu.Table.Controls"), ImGuiMCP::ImGuiTableColumnFlags_WidthStretch);
+            ImGuiMCP::TableSetupColumn(Translation::Get("DevMode.Window2.Table.Controls"), ImGuiMCP::ImGuiTableColumnFlags_WidthStretch);
         }
         ImGuiMCP::TableHeadersRow();
 
@@ -259,26 +259,26 @@ void __stdcall UI::NewGame::RenderChooseCharacterWindow() {
                 ImGuiMCP::TableSetColumnIndex(1);
                 bool isMale = base->GetSex() == RE::SEX::kMale;
                 ImGuiMCP::ImVec4 sexColor = isMale ? ImGuiMCP::ImVec4{0.0f, 0.6f, 1.0f, 1.0f} : ImGuiMCP::ImVec4{1.0f, 0.4f, 0.8f, 1.0f};
-                ImGuiMCP::TextColored(sexColor, "%s", isMale ? Translation::Get("CharacterMenu.Table.Male") : Translation::Get("CharacterMenu.Table.Female"));
+                ImGuiMCP::TextColored(sexColor, "%s", isMale ? Translation::Get("Window2.Table.Male") : Translation::Get("Window2.Table.Female"));
 
                 ImGuiMCP::TableSetColumnIndex(2);
                 ImGuiMCP::Text("%d", base->GetLevel());
                 
                 if (wasDevMode) {
                     ImGuiMCP::TableSetColumnIndex(3);
-                    if (ImGuiMCP::Button(std::format("{}##{:x}", Translation::Get("DevMode.CharacterMenu.Table.CopyId"), entry.item->GetFormID()).c_str())) {
+                    if (ImGuiMCP::Button(std::format("{}##{:x}", Translation::Get("DevMode.Window2.Table.CopyId"), entry.item->GetFormID()).c_str())) {
                         FormID::Copy(entry.item);
                     }
                     ImGuiMCP::SameLine();
-                    if (ImGuiMCP::Button(std::format("{}##{:x}", Translation::Get("DevMode.CharacterMenu.Table.CopyBaseId"), entry.item->GetFormID()).c_str())) {
+                    if (ImGuiMCP::Button(std::format("{}##{:x}", Translation::Get("DevMode.Window2.Table.CopyBaseId"), entry.item->GetFormID()).c_str())) {
                         FormID::Copy(entry.item->GetBaseObject());
                     }
                     ImGuiMCP::SameLine();
-                    if (ImGuiMCP::Button(std::format("{}##{:x}", Translation::Get("DevMode.CharacterMenu.Table.CopyCellId"), entry.item->GetFormID()).c_str())) {
+                    if (ImGuiMCP::Button(std::format("{}##{:x}", Translation::Get("DevMode.Window2.Table.CopyCellId"), entry.item->GetFormID()).c_str())) {
                         FormID::Copy(entry.item->GetParentCell());
                     }
                     ImGuiMCP::SameLine();
-                    if (ImGuiMCP::Button(std::format("{}##{:x}", Translation::Get("DevMode.CharacterMenu.Table.ChooseCharacter"), entry.item->GetFormID()).c_str())) {
+                    if (ImGuiMCP::Button(std::format("{}##{:x}", Translation::Get("DevMode.Window2.Table.ChooseCharacter"), entry.item->GetFormID()).c_str())) {
                         Manager::SetBaseCharacter(item);
                         Next();
                     }
@@ -297,15 +297,15 @@ void __stdcall UI::NewGame::RenderChooseCharacterWindow() {
     FontAwesome::PushSolid();
 
     ImGuiMCP::BeginDisabled(currentPage <= 0);
-    if (ImGuiMCP::Button(Translation::Get("CharacterMenu.Table.Previus"))) currentPage--;
+    if (ImGuiMCP::Button(Translation::Get("Window2.Table.Previus"))) currentPage--;
     ImGuiMCP::EndDisabled();
 
     ImGuiMCP::SameLine();
-    ImGuiMCP::Text(std::format("{} {} / {}", Translation::Get("CharacterMenu.Table.Page"), currentPage + 1, totalPages).c_str());
+    ImGuiMCP::Text(std::format("{} {} / {}", Translation::Get("Window2.Table.Page"), currentPage + 1, totalPages).c_str());
     ImGuiMCP::SameLine();
 
     ImGuiMCP::BeginDisabled(currentPage >= totalPages - 1);
-    if (ImGuiMCP::Button(Translation::Get("CharacterMenu.Table.Next"))) currentPage++;
+    if (ImGuiMCP::Button(Translation::Get("Window2.Table.Next"))) currentPage++;
     ImGuiMCP::EndDisabled();
     FontAwesome::Pop();
 
@@ -315,7 +315,7 @@ void __stdcall UI::NewGame::RenderChooseCharacterWindow() {
 
 
 void __stdcall UI::NewGame::RenderChooseSideWindow() {
-    BeguinWindow(Translation::Get("SettingsMenu.Settings"));
+    BeguinWindow(Translation::Get("Window3.Settings"));
 
     ImGuiMCP::ImVec2 region;
     ImGuiMCP::GetContentRegionAvail(&region);
@@ -342,8 +342,8 @@ void __stdcall UI::NewGame::RenderChooseSideWindow() {
     ImGuiMCP::SetCursorPosX(offsetX);
     ImGuiMCP::BeginGroup();
 
-    ImGuiMCPComponents::ToggleButton(Translation::Get("SettingsMenu.StartMainQuestline"), &Manager::startMainQuestLine);
-    ImGuiMCPComponents::ToggleButton(Translation::Get("SettingsMenu.StartAtNpcLocation"), &Manager::startAtNPCLocation);
+    ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartMainQuestline"), &Manager::startMainQuestLine);
+    ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartAtNpcLocation"), &Manager::startAtNPCLocation);
 
     ImGuiMCP::Spacing();
     ImGuiMCP::Separator();
@@ -367,7 +367,7 @@ void __stdcall UI::NewGame::RenderChooseSideWindow() {
 }
 
 void __stdcall UI::NewGame::RenderReviewWindow() {
-    BeguinWindow(Translation::Get("Finish.ChooseAndReview"));
+    BeguinWindow(Translation::Get("Window4.ChooseAndReview"));
 
     ImGuiMCP::ImVec2 region;
     ImGuiMCP::GetContentRegionAvail(&region);
@@ -388,24 +388,28 @@ void __stdcall UI::NewGame::RenderReviewWindow() {
 
     const char* baseName = Manager::GetBaseCharacter() ? Manager::GetBaseCharacter()->GetDisplayFullName() : "Unknown";
 
-    ImGuiMCP::Text(Translation::Get("Finish.BaseCharacter"));
+    ImGuiMCP::Text(Translation::Get("Window4.BaseCharacter"));
     ImGuiMCP::BulletText("%s", baseName);
     ImGuiMCP::Spacing();
 
-    ImGuiMCP::Text(Translation::Get("SettingsMenu.StartMainQuestline"));
+    ImGuiMCP::Text(Translation::Get("Window4.StartMainQuestline"));
     if (Manager::startMainQuestLine) {
         ImGuiMCP::BulletText("%s", Translation::Get("Controls.Yes"));
     } else {
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
-        ImGuiMCP::BulletText("%s", Translation::Get("Controls.No"));
+        ImGuiMCP::BulletText("%s", Translation::Get("Window4.StartMainQuestlineNo"));
         ImGuiMCP::PopStyleColor();
     }
     ImGuiMCP::Spacing();
+    ImGuiMCP::Text(Translation::Get("Window4.StartAtNpcLocation"));
 
-    ImGuiMCP::Text(Translation::Get("SettingsMenu.StartAtNpcLocation"));
-    ImGuiMCP::BulletText("%s", Manager::startAtNPCLocation ? Translation::Get("Controls.Yes") : Translation::Get("Controls.No"));
-    ImGuiMCP::Spacing();
-
+    if (Manager::startAtNPCLocation) {
+        ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
+        ImGuiMCP::BulletText("%s", Translation::Get("Window4.StartAtNpcLocationYes"));
+        ImGuiMCP::PopStyleColor();
+    } else {
+        ImGuiMCP::BulletText("%s", Translation::Get("Controls.No"));
+    }
 
     ImGuiMCP::Spacing();
     ImGuiMCP::Separator();
