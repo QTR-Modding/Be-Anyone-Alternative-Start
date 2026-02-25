@@ -22,15 +22,17 @@
   "DevMode.Window2.Table.CopyCellId": "Copy Cell Id",
 
   "Window3.Settings": "Settings",
+  "Window3.LiveAnotherLifeStart": "Use live another life start",
   "Window3.StartMainQuestline": "Start Main Quest Line (If no, he main quest line will only be available trough console commands)",
   "Window3.StartAtNpcLocation": "Start at NPC location (If yes, depending on where the NPC is,\n you may not be able to leave there without console commands)",
   "Window3.StartAtDefaultLocation": "Start default location",
 
   "Window4.ChooseAndReview": "Choose where you want to start, and review your choices.",
   "Window4.BaseCharacter": "Base Character: ",
-  "Window4.WarSide": "War Side: ",
+  "Window4.LiveAnotherLifeStart": "Live Another Life Start: ",
   "Window4.StartMainQuestline": "Start Main Quest Line",
   "Window4.StartAtNpcLocation": "Start at NPC location",
+  "Window4.LiveAnotherLifeStartYes": "Yes (You will not get the NPC gear)",
   "Window4.StartAtNpcLocationYes": "Yes (The main quest line will only be available trough console commands)",
   "Window4.StartMainQuestlineNo": "No (depending on where the NPC is,\n you may not be able to leave there without console commands)",
 

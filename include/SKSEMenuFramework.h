@@ -11341,7 +11341,7 @@ namespace ImGuiMCP {
 }
 
 namespace ImGuiMCPComponents {
-    inline bool ToggleButton(const char* label, bool* v) {
+    inline bool ToggleButton(const char* label, bool* v, bool disabled = false) {
         ImGuiMCP::ImVec2 p;
         ImGuiMCP::GetCursorScreenPos(&p);
         ImGuiMCP::ImDrawList* draw_list = ImGuiMCP::GetWindowDrawList();
@@ -11351,16 +11351,34 @@ namespace ImGuiMCPComponents {
 
         ImGuiMCP::PushID(label);
 
+        if (disabled)
+        {
+            ImGuiMCP::BeginDisabled();
+        }
+
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Header, ImGuiMCP::ImVec4(0, 0, 0, 0));
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_HeaderHovered, ImGuiMCP::ImVec4(0, 0, 0, 0));
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_HeaderActive, ImGuiMCP::ImVec4(0, 0, 0, 0));
 
-        bool clicked = ImGuiMCP::Selectable(std::format("##toggle-{}", label).c_str(), false, 0, ImGuiMCP::ImVec2(width, height));
+        bool clicked = false;
+
+        if (!disabled)
+        {
+            clicked = ImGuiMCP::Selectable(std::format("##toggle-{}", label).c_str(), false, 0, ImGuiMCP::ImVec2(width, height));
+        }
+        else {
+            ImGuiMCP::Selectable(std::format("##toggle-{}", label).c_str(), false, ImGuiMCP::ImGuiSelectableFlags_Disabled, ImGuiMCP::ImVec2(width, height));
+        }
 
         ImGuiMCP::PopStyleColor(3);
+
+        if (disabled) {
+            ImGuiMCP::EndDisabled();
+        }
+
         ImGuiMCP::PopID();
 
-        if (clicked) {
+        if (clicked && !disabled) {
             *v = !*v;
         }
 
@@ -11369,10 +11387,25 @@ namespace ImGuiMCPComponents {
 
         float t = *v ? 1.0f : 0.0f;
 
-        ImGuiMCP::ImU32 col_bg = *v ? IM_COL32(0, 160, 0, 255) : IM_COL32(160, 0, 0, 255);
+        ImGuiMCP::ImU32 col_bg;
+
+        if (disabled)
+        {
+            col_bg = *v ? IM_COL32(0, 80, 0, 255) : IM_COL32(80, 0, 0, 255);
+        }
+        else
+        {
+            col_bg = *v ? IM_COL32(0, 160, 0, 255) : IM_COL32(160, 0, 0, 255);
+        }
 
         ImGuiMCP::ImDrawListManager::AddRectFilled(draw_list, p_min, p_max, col_bg, height * 0.5f, 0);
-        ImGuiMCP::ImDrawListManager::AddCircleFilled(draw_list, ImGuiMCP::ImVec2(p.x + radius + t * (width - radius * 2.0f), p.y + radius), radius - 1.5f, IM_COL32(255, 255, 255, 255), 32);
+        ImGuiMCP::ImDrawListManager::AddCircleFilled(
+            draw_list,
+            ImGuiMCP::ImVec2(p.x + radius + t * (width - radius * 2.0f), p.y + radius),
+            radius - 1.5f,
+            disabled ? IM_COL32(200, 200, 200, 255) : IM_COL32(255, 255, 255, 255),
+            32
+        );
 
         ImGuiMCP::SameLine();
 

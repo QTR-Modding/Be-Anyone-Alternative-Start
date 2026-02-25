@@ -5,6 +5,7 @@
 #include "FormId.h"
 #include "Configuration.h"
 #include "SpeachManager.h"
+#include "Patch.h"
 
 void UI::Register() {
     if (!SKSEMenuFramework::IsInstalled()) {
@@ -342,8 +343,22 @@ void __stdcall UI::NewGame::RenderChooseSideWindow() {
     ImGuiMCP::SetCursorPosX(offsetX);
     ImGuiMCP::BeginGroup();
 
-    ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartMainQuestline"), &Manager::startMainQuestLine);
-    ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartAtNpcLocation"), &Manager::startAtNPCLocation);
+
+    if (Manager::liveAnotherLifeStart) {
+        Manager::startMainQuestLine = true;
+        Manager::startAtNPCLocation = false;
+    }
+
+    if (Patch::IsLiveAnotherLifeInstalled()) {
+        ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.LiveAnotherLifeStart"), &Manager::liveAnotherLifeStart);
+    } else {
+        Manager::liveAnotherLifeStart = false;
+    }
+
+    ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartMainQuestline"), &Manager::startMainQuestLine, Manager::liveAnotherLifeStart);
+    ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartAtNpcLocation"), &Manager::startAtNPCLocation, Manager::liveAnotherLifeStart);
+
+
 
     ImGuiMCP::Spacing();
     ImGuiMCP::Separator();
@@ -392,20 +407,34 @@ void __stdcall UI::NewGame::RenderReviewWindow() {
     ImGuiMCP::BulletText("%s", baseName);
     ImGuiMCP::Spacing();
 
-    ImGuiMCP::Text(Translation::Get("Window4.StartMainQuestline"));
-    if (Manager::startMainQuestLine) {
-        ImGuiMCP::BulletText("%s", Translation::Get("Controls.Yes"));
-    } else {
-        ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
-        ImGuiMCP::BulletText("%s", Translation::Get("Window4.StartMainQuestlineNo"));
-        ImGuiMCP::PopStyleColor();
-    }
-    ImGuiMCP::Spacing();
-    ImGuiMCP::Text(Translation::Get("Window4.StartAtNpcLocation"));
+    if (!Manager::liveAnotherLifeStart) {
+        ImGuiMCP::Text(Translation::Get("Window4.StartMainQuestline"));
+        if (Manager::startMainQuestLine) {
+            ImGuiMCP::BulletText("%s", Translation::Get("Controls.Yes"));
+        } else {
+            ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
+            ImGuiMCP::BulletText("%s", Translation::Get("Window4.StartMainQuestlineNo"));
+            ImGuiMCP::PopStyleColor();
+        }
+        ImGuiMCP::Spacing();
+        ImGuiMCP::Text(Translation::Get("Window4.StartAtNpcLocation"));
 
-    if (Manager::startAtNPCLocation) {
+
+        if (Manager::startAtNPCLocation) {
+            ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
+            ImGuiMCP::BulletText("%s", Translation::Get("Window4.StartAtNpcLocationYes"));
+            ImGuiMCP::PopStyleColor();
+        } else {
+            ImGuiMCP::BulletText("%s", Translation::Get("Controls.No"));
+        }
+
+        ImGuiMCP::Spacing();
+        ImGuiMCP::Text(Translation::Get("Window4.LiveAnotherLifeStart"));
+    }
+
+    if (Manager::liveAnotherLifeStart) {
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
-        ImGuiMCP::BulletText("%s", Translation::Get("Window4.StartAtNpcLocationYes"));
+        ImGuiMCP::BulletText("%s", Translation::Get("Window4.LiveAnotherLifeStartYes"));
         ImGuiMCP::PopStyleColor();
     } else {
         ImGuiMCP::BulletText("%s", Translation::Get("Controls.No"));

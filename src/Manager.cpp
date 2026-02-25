@@ -7,7 +7,9 @@
 #include "IgnoreManager.h"
 #include "Configuration.h"
 #include "Form.h"
-
+#include "UI.h"
+#include "Patch.h"
+#include "Racemenu.h"
 bool IsNullOrWhitespace(const char* str) {
     if (!str) return true;
     while (*str) {
@@ -28,29 +30,27 @@ bool IsNullOrWhitespace(const char* str) {
 #define CW 0x19E53
 #define MQ00 0x1C5D9
 
-inline bool IsLiveAnotherLifeInstalled() {
-    constexpr auto dllPath = "Data/alternate start - live another life.esp";
-    return std::filesystem::exists(dllPath);
-}
 
 void OnSpreachEnd() {
-
-    auto quests = StarterQuestManager::GetGroupForCharacter(Manager::GetPatternFormID());
-    if (quests) {
-        quests->Apply();
+    if (!Manager::liveAnotherLifeStart) {
+        auto quests = StarterQuestManager::GetGroupForCharacter(Manager::GetPatternFormID());
+        if (quests) {
+            quests->Apply();
+        }
+        auto defaultQuests = StarterQuestManager::GetGroupForCharacter(0);
+        if (defaultQuests) {
+            defaultQuests->Apply();
+        }
     }
-    auto defaultQuests = StarterQuestManager::GetGroupForCharacter(0);
-    if (defaultQuests) {
-        defaultQuests->Apply();
-    }
-    if (Manager::startMainQuestLine) {
-        if (IsLiveAnotherLifeInstalled()) {
+    if (!Manager::liveAnotherLifeStart) {
+        if (Patch::IsLiveAnotherLifeInstalled()) {
             auto ARTHLALRumorsOfWarQuest = Form::GetIdFromString("alternate start - live another life.esp~0x7a334");
             auto ARTHLALChargenQuest = Form::GetIdFromString("alternate start - live another life.esp~0xDAF");
             Quest::CallQuestVoidFunction(ARTHLALChargenQuest, "arth_lal_startquest", "CleanupHelgen");
             Quest::SetQuestSage(ARTHLALRumorsOfWarQuest, {20, 25, 28, 29, 30, 31, 32, 40, 41, 50});
         }
         Quest::SetQuestSage(CW, {0});
+        Quest::SetQuestSage(MQ00, {5});
         Quest::SetQuestSage(MQ102, {30});
     }
 }
@@ -122,88 +122,19 @@ void Manager::Install() {
         return std::strcmp(a->GetName(), b->GetName()) < 0;
     });
 }
-inline bool IsRaceMenuInstalled() {
-    constexpr auto dllPath = "Data/RaceMenu.esp";
-    return std::filesystem::exists(dllPath);
-}
-void ModifyRaceMenu(const char* name) {
-    auto ui = RE::UI::GetSingleton();
-    auto faderMenu = ui->GetMenu<RE::RaceSexMenu>();
-    if (!faderMenu) {
-        logger::error("no fader menu");
-        return;
-    }
 
-    RE::GFxValue _root;
-    RE::GFxValue RaceSexMenuBaseInstance;
-    RE::GFxValue RaceSexPanelsInstance;
-
-    if (!faderMenu->uiMovie->GetVariable(&_root, "_root")) {
-        logger::error("no root");
-        return;
-    }
-
-    if (!_root.GetMember("RaceSexMenuBaseInstance", &RaceSexMenuBaseInstance)) {
-        logger::error("no RaceSexMenuBaseInstance");
-        return;
-    }
-    if (!RaceSexMenuBaseInstance.GetMember("RaceSexPanelsInstance", &RaceSexPanelsInstance)) {
-        logger::error("no RaceSexPanelsInstance");
-        return;
-    }
-
-    if (IsRaceMenuInstalled()) {
-        RE::GFxValue textEntryField;
-        if (RaceSexPanelsInstance.GetMember("textEntry", &textEntryField)) {
-            RE::GFxValue textInput;
-            if (textEntryField.GetMember("TextInputInstance", &textInput)) {
-                textInput.SetText(name);
-                textInput.SetMember("focused", true);  // or textInput.SetBoolean("focused", true);
-            }
-
-            // FadeTextEntry(true) is on the panel, not the field
-            RE::GFxValue fadeArgs[1];
-            fadeArgs[0].SetBoolean(true);
-            RaceSexPanelsInstance.Invoke("ShowTextEntry", nullptr, fadeArgs, 1);
-        }
-    } else {
-        RE::GFxValue textEntryField;
-        if (RaceSexPanelsInstance.GetMember("_TextEntryField", &textEntryField)) {
-            RE::GFxValue textInput;
-            if (textEntryField.GetMember("TextInputInstance", &textInput)) {
-                textInput.SetText(name);
-                textInput.SetMember("focused", true);  // or textInput.SetBoolean("focused", true);
-            }
-
-            // FadeTextEntry(true) is on the panel, not the field
-            RE::GFxValue fadeArgs[1];
-            fadeArgs[0].SetBoolean(true);
-            RaceSexPanelsInstance.Invoke("FadeTextEntry", nullptr, fadeArgs, 1);
-        }
-    }
-    RE::ControlMap::GetSingleton()->AllowTextInput(true);
-}
 
 void Manager::ShowRaceMenu() {
     if (!enabled) return;
     if (!doesGameStartedNow) {
         return;
     }
-
     doesGameStartedNow = false;
-    if (!Quest::IsDone(MQ101)) {
-        RE::UIMessageQueue::GetSingleton()->AddMessage(RE::RaceSexMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kShow, nullptr);
-        std::thread([] { 
 
-            while (true) {
-                if (RE::UI::GetSingleton()->IsMenuOpen(RE::RaceSexMenu::MENU_NAME)) {
-                    ModifyRaceMenu(RE::PlayerCharacter::GetSingleton()->GetName()); 
-                    break;
-                }
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-             
-            }).detach();
+    Racemenu::ModiftyWhenOpen();
+
+    if (!liveAnotherLifeStart) {
+        RE::UIMessageQueue::GetSingleton()->AddMessage(RE::RaceSexMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kShow, nullptr);
     }
 }
 
@@ -330,10 +261,14 @@ void Manager::StartGame() {
             player->MoveTo(playerCopyTarget);
         });
     } else {
-        SKSE::GetTaskInterface()->AddTask([]() {
-            auto player = RE::PlayerCharacter::GetSingleton();
-            player->CenterOnCell(Configuration::StartLocation.c_str());
-        });
+        if (Manager::liveAnotherLifeStart) {
+            UI::NewGame::startNewGame();
+        } else {
+            SKSE::GetTaskInterface()->AddTask([]() {
+                auto player = RE::PlayerCharacter::GetSingleton();
+                player->CenterOnCell(Configuration::StartLocation.c_str());
+            });
+        }
     }
     
 }
