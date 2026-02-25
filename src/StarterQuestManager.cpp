@@ -7,9 +7,10 @@
 using json = nlohmann::json;
 
 void StarterQuestManager::Install() {
+    try {
     groups.clear();
 
-    auto files = Folder::GetAllFiles(".\\Data\\", "_BA_STARTER_QUEST.json");
+    auto files = Folder::GetAllFiles("Data/", "_BA_STARTER_QUEST.json");
 
     for (const auto& path : files) {
         try {
@@ -104,6 +105,9 @@ void StarterQuestManager::Install() {
         } catch (const std::exception& e) {
             logger::error("On file: {}; Exception: {}", path.string(), e.what());
         }
+    }
+    } catch (const std::exception& e) {
+        logger::error("On StartObjectManager; Exception: {}", e.what());
     }
 }
 

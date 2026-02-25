@@ -344,19 +344,16 @@ void __stdcall UI::NewGame::RenderChooseSideWindow() {
     ImGuiMCP::BeginGroup();
 
 
-    if (Manager::liveAnotherLifeStart) {
+    if (Manager::defaultStart) {
         Manager::startMainQuestLine = true;
         Manager::startAtNPCLocation = false;
     }
 
-    if (Patch::IsLiveAnotherLifeInstalled()) {
-        ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.LiveAnotherLifeStart"), &Manager::liveAnotherLifeStart);
-    } else {
-        Manager::liveAnotherLifeStart = false;
-    }
+     ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.DefaultStart"), &Manager::defaultStart);
 
-    ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartMainQuestline"), &Manager::startMainQuestLine, Manager::liveAnotherLifeStart);
-    ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartAtNpcLocation"), &Manager::startAtNPCLocation, Manager::liveAnotherLifeStart);
+
+    ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartMainQuestline"), &Manager::startMainQuestLine, Manager::defaultStart);
+     ImGuiMCPComponents::ToggleButton(Translation::Get("Window3.StartAtNpcLocation"), &Manager::startAtNPCLocation, Manager::defaultStart);
 
 
 
@@ -407,7 +404,7 @@ void __stdcall UI::NewGame::RenderReviewWindow() {
     ImGuiMCP::BulletText("%s", baseName);
     ImGuiMCP::Spacing();
 
-    if (!Manager::liveAnotherLifeStart) {
+    if (!Manager::defaultStart) {
         ImGuiMCP::Text(Translation::Get("Window4.StartMainQuestline"));
         if (Manager::startMainQuestLine) {
             ImGuiMCP::BulletText("%s", Translation::Get("Controls.Yes"));
@@ -429,12 +426,12 @@ void __stdcall UI::NewGame::RenderReviewWindow() {
         }
 
         ImGuiMCP::Spacing();
-        ImGuiMCP::Text(Translation::Get("Window4.LiveAnotherLifeStart"));
     }
+    ImGuiMCP::Text(Translation::Get("Window4.DefaultStart"));
 
-    if (Manager::liveAnotherLifeStart) {
+    if (Manager::defaultStart) {
         ImGuiMCP::PushStyleColor(ImGuiMCP::ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
-        ImGuiMCP::BulletText("%s", Translation::Get("Window4.LiveAnotherLifeStartYes"));
+        ImGuiMCP::BulletText("%s", Translation::Get("Window4.DefaultStartYes"));
         ImGuiMCP::PopStyleColor();
     } else {
         ImGuiMCP::BulletText("%s", Translation::Get("Controls.No"));

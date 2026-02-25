@@ -10,3 +10,8 @@ bool Patch::IsRaceMenuInstalled() {
     constexpr auto dllPath = "Data/RaceMenu.esp";
     return std::filesystem::exists(dllPath);
 }
+
+bool Patch::IsSubtitlesInstalled() {
+    constexpr auto dllPath = "Data/SKSE/Plugins/Subtitles.dll";
+    return std::filesystem::exists(dllPath);
+}

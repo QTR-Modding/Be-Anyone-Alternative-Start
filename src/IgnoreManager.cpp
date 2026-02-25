@@ -22,9 +22,10 @@ bool IgnoreManager::DoesIgnore(RE::TESObjectREFR* reference) {
 }
 
 void IgnoreManager::Install() {
+    try {
     igonreReferences.clear();
     ignroeCells.clear();
-    auto files = Folder::GetAllFiles(".\\Data\\", "_BA_IGNORE.json");
+    auto files = Folder::GetAllFiles("Data/", "_BA_IGNORE.json");
     for (const auto& path : files) {
         try {
             std::ifstream file(path);
@@ -73,5 +74,8 @@ void IgnoreManager::Install() {
         } catch (const std::exception& e) {
             logger::error("On file: {}; Exception: {}", path.string(), e.what());
         }
+    }
+    } catch (const std::exception& e) {
+        logger::error("On StartObjectManager; Exception: {}", e.what());
     }
 }

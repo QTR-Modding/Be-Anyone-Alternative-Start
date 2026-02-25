@@ -15,7 +15,7 @@ public:
     static void CopyData();
     static std::vector<RE::Character*>& GetAllCharacters();
     static void OnNewGame();
-    static inline bool liveAnotherLifeStart = false;
+    static inline bool defaultStart = false;
     static inline bool startAtNPCLocation = false;
     static inline bool startMainQuestLine = true;
     static inline bool enabled = false;

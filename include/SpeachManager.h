@@ -3,6 +3,7 @@
 typedef void(__stdcall* SpeachEndCallback)();
 #include "FileWritter.h"
 #include "FileReader.h"
+#include "Patch.h"
 struct Speech {
     std::string speaker;
     std::string text;
@@ -73,8 +74,8 @@ class SpeechManager {
                     continue;
                 }
             }
-
-            if (RE::UI::GetSingleton()->GameIsPaused()) {
+            auto ui = RE::UI::GetSingleton();
+            if (ui && ui->GameIsPaused()) {
                 if (hasPaused) {
                     hasPaused = false;
                     if (hasAudio) {
@@ -86,10 +87,15 @@ class SpeechManager {
                 continue;
             } else if(!hasPaused) {
                 hasPaused = true;
-                if (!isFirst) {
-                    const auto text = next.GetFullText();
-                    RE::GFxValue asStr(text.c_str());
-                    GetHudMenu().Invoke("ShowSubtitle", nullptr, &asStr, 1);
+                if (!Patch::IsSubtitlesInstalled()) {
+                    if (!isFirst) {
+                        auto hud = GetHudMenu();
+                        if (!hud.IsNull()) {
+                            const auto text = next.GetFullText();
+                            RE::GFxValue asStr(text.c_str());
+                            hud.Invoke("ShowSubtitle", nullptr, &asStr, 1);
+                        }
+                    }
                 }
                 if (hasAudio) {
                     
@@ -117,7 +123,19 @@ class SpeechManager {
                             callback();
                         }
                     }
-                    SKSE::GetTaskInterface()->AddTask([]() { GetHudMenu().Invoke("HideSubtitle", nullptr, nullptr, 0); });
+                    if (!Patch::IsSubtitlesInstalled()) {
+                        auto hud = GetHudMenu();
+                        if (!hud.IsNull()) {
+                            RE::GFxValue asStr("");
+                            hud.Invoke("ShowSubtitle", nullptr, &asStr, 1);
+                            SKSE::GetTaskInterface()->AddTask([]() {
+                                auto hud = GetHudMenu();
+                                if (!hud.IsNull()) {
+                                    hud.Invoke("HideSubtitle", nullptr, nullptr, 0);
+                                }
+                            });
+                        }
+                    }
                     lock.unlock();
                     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                     continue;
@@ -139,9 +157,14 @@ class SpeechManager {
                         hasAudio = true;
                     }
                 }
-                const auto text = next.GetFullText();
-                RE::GFxValue asStr(text.c_str());
-                GetHudMenu().Invoke("ShowSubtitle", nullptr, &asStr, 1);
+                if (!Patch::IsSubtitlesInstalled()) {
+                    auto hud = GetHudMenu();
+                    if (!hud.IsNull()) {
+                        const auto text = next.GetFullText();
+                        RE::GFxValue asStr(text.c_str());
+                        hud.Invoke("ShowSubtitle", nullptr, &asStr, 1);
+                    }
+                }
             });
 
             audioStartTimeInMS = GetCurrentTimeMs();

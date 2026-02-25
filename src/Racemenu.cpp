@@ -18,42 +18,28 @@ void Racemenu::Modifty(const char* name) {
         return;
     }
 
-    if (!_root.GetMember("RaceSexMenuBaseInstance", &RaceSexMenuBaseInstance)) {
+    if (_root.IsNull() || !_root.GetMember("RaceSexMenuBaseInstance", &RaceSexMenuBaseInstance)) {
         logger::error("no RaceSexMenuBaseInstance");
         return;
     }
-    if (!RaceSexMenuBaseInstance.GetMember("RaceSexPanelsInstance", &RaceSexPanelsInstance)) {
+    if (RaceSexMenuBaseInstance.IsNull() || !RaceSexMenuBaseInstance.GetMember("RaceSexPanelsInstance", &RaceSexPanelsInstance)) {
         logger::error("no RaceSexPanelsInstance");
         return;
     }
 
-    if (Patch::IsRaceMenuInstalled()) {
-        RE::GFxValue textEntryField;
-        if (RaceSexPanelsInstance.GetMember("textEntry", &textEntryField)) {
-            RE::GFxValue textInput;
-            if (textEntryField.GetMember("TextInputInstance", &textInput)) {
-                textInput.SetText(name);
-                textInput.SetMember("focused", true); 
-            }
-
-            RE::GFxValue fadeArgs[1];
-            fadeArgs[0].SetBoolean(true);
-            RaceSexPanelsInstance.Invoke("ShowTextEntry", nullptr, fadeArgs, 1);
+    RE::GFxValue textEntryField;
+    if (RaceSexPanelsInstance.GetMember("_TextEntryField", &textEntryField)) {
+        RE::GFxValue textInput;
+        if (!textInput.IsNull() && textEntryField.GetMember("TextInputInstance", &textInput)) {
+            textInput.SetText(name);
+            textInput.SetMember("focused", true);
         }
-    } else {
-        RE::GFxValue textEntryField;
-        if (RaceSexPanelsInstance.GetMember("_TextEntryField", &textEntryField)) {
-            RE::GFxValue textInput;
-            if (textEntryField.GetMember("TextInputInstance", &textInput)) {
-                textInput.SetText(name);
-                textInput.SetMember("focused", true);
-            }
 
-            RE::GFxValue fadeArgs[1];
-            fadeArgs[0].SetBoolean(true);
-            RaceSexPanelsInstance.Invoke("FadeTextEntry", nullptr, fadeArgs, 1);
-        }
+        RE::GFxValue fadeArgs[1];
+        fadeArgs[0].SetBoolean(true);
+        RaceSexPanelsInstance.Invoke("FadeTextEntry", nullptr, fadeArgs, 1);
     }
+    
     RE::ControlMap::GetSingleton()->AllowTextInput(true);
 }
 

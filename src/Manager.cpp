@@ -32,7 +32,7 @@ bool IsNullOrWhitespace(const char* str) {
 
 
 void OnSpreachEnd() {
-    if (!Manager::liveAnotherLifeStart) {
+    if (!Manager::defaultStart) {
         auto quests = StarterQuestManager::GetGroupForCharacter(Manager::GetPatternFormID());
         if (quests) {
             quests->Apply();
@@ -41,8 +41,6 @@ void OnSpreachEnd() {
         if (defaultQuests) {
             defaultQuests->Apply();
         }
-    }
-    if (!Manager::liveAnotherLifeStart) {
         if (Patch::IsLiveAnotherLifeInstalled()) {
             auto ARTHLALRumorsOfWarQuest = Form::GetIdFromString("alternate start - live another life.esp~0x7a334");
             auto ARTHLALChargenQuest = Form::GetIdFromString("alternate start - live another life.esp~0xDAF");
@@ -131,7 +129,11 @@ void Manager::ShowRaceMenu() {
     }
     doesGameStartedNow = false;
 
-    if (!liveAnotherLifeStart) {
+    if (!Patch::IsRaceMenuInstalled()) {
+        Racemenu::ModiftyWhenOpen();
+    }
+
+    if (!defaultStart) {
         RE::UIMessageQueue::GetSingleton()->AddMessage(RE::RaceSexMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kShow, nullptr);
     }
 }
@@ -143,6 +145,11 @@ void Manager::PlayerHideRaceMenu() {
     }
 
     firstRaceMenuHide = false;
+
+    
+    if (defaultStart) {
+        return;
+    }
 
     auto specificItems = StartObjectManager::GetGroupForCharacter(GetPatternFormID());
     if (specificItems) {
@@ -259,7 +266,7 @@ void Manager::StartGame() {
             player->MoveTo(playerCopyTarget);
         });
     } else {
-        if (Manager::liveAnotherLifeStart) {
+        if (Manager::defaultStart) {
             UI::NewGame::startNewGame();
         } else {
             SKSE::GetTaskInterface()->AddTask([]() {

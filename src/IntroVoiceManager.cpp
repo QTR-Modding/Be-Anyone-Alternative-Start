@@ -6,9 +6,10 @@
 using json = nlohmann::json;
 
 void IntroVoiceManager::Install() {
+    try {
     groups.clear();
 
-    auto files = Folder::GetAllFiles(".\\Data\\", "_BA_INTRO_SPEACH.json");
+    auto files = Folder::GetAllFiles("Data/", "_BA_INTRO_SPEACH.json");
 
     for (const auto& path : files) {
         try {
@@ -86,6 +87,9 @@ void IntroVoiceManager::Install() {
         } catch (const std::exception& e) {
             logger::error("On file: {}; Exception: {}", path.string(), e.what());
         }
+    }
+    } catch (const std::exception& e) {
+        logger::error("On StartObjectManager; Exception: {}", e.what());
     }
 }
 
