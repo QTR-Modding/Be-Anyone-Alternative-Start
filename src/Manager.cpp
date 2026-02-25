@@ -131,8 +131,6 @@ void Manager::ShowRaceMenu() {
     }
     doesGameStartedNow = false;
 
-    Racemenu::ModiftyWhenOpen();
-
     if (!liveAnotherLifeStart) {
         RE::UIMessageQueue::GetSingleton()->AddMessage(RE::RaceSexMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kShow, nullptr);
     }
